@@ -1,11 +1,4 @@
 
-# Sistem Informasi Sekolah
-
-Sistem informasi sekolah berbasis laravel 11 dengan template dashboard
-[Stisla](https://getstisla.com/)
-## Authors
-
-- [Pascal Adnan](https://www.github.com/lacsapadnan)
 
 
 ## Fitur
@@ -111,11 +104,3 @@ Admin
   password : password
 ```
 
-## PEMBELIAN
-
-~~Promo 10/10 Orang Pertama **500rb**~~
-Promo 15/20 Kloter Berikutnya **750rb**
-
-Hubungi 
-- https://wa.me/6282244793613
-- http://instagram.com/lacsapadnan
