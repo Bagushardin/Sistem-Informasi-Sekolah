@@ -153,15 +153,15 @@ class HomeController extends Controller
         // Debug logging
         Log::info('Guru dashboard accessed', [
             'user_id' => $user->id,
-            'role' => $user->role,
+            'role' => $user->roles,
             'email' => $user->email
         ]);
         
         // Verify user has guru role
-        if ($user->role !== 'guru') {
+        if ($user->roles !== 'guru') {
             Log::warning('Non-guru user trying to access guru dashboard', [
                 'user_id' => $user->id,
-                'role' => $user->role
+                'role' => $user->roles
             ]);
             abort(403, 'Unauthorized access to guru dashboard');
         }
