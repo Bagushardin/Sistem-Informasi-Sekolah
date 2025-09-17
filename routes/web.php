@@ -15,6 +15,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\AbsensiController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthSiswaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -56,6 +57,14 @@ Route::group(['middleware' => 'auth'], function () {
     Route::put('/update-profile', [UserController::class, 'update'])->name('update.profile');
     Route::get('/edit-password', [UserController::class, 'editPassword'])->name('ubah-password');
     Route::patch('/update-password', [UserController::class, 'updatePassword'])->name('update-password');
+});
+
+
+// add Siswa Authentication routes
+Route::group(['prefix' => 'siswa'], function () {
+    Route::get('/login', [AuthSiswaController::class, 'showLoginForm'])->name('siswa.login');
+    Route::post('/login', [AuthSiswaController::class, 'login'])->name('siswa.login.submit');
+    Route::post('/logout', [AuthSiswaController::class, 'logout'])->name('siswa.logout');
 });
 
 

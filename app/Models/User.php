@@ -54,4 +54,6 @@ class User extends Authenticatable
         $siswa = Siswa::where('nis', $id)->first();
         return $siswa;
     }
+
+    
 }

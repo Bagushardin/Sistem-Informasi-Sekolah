@@ -13,10 +13,18 @@
                 <i class="far fa-user"></i> Pengaturan Profil
             </a>
             <div class="dropdown-divider"></div>
+            {{-- perbaikan logout --}}
             <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i class="nav-icon fas fa-sign-out-alt"></i> &nbsp; Log Out</a>
+                @if (auth()->user()->roles == 'siswa')    
+                <form id="logout-form" action="{{ route('siswa.logout') }}" method="POST" style="display: none;">
+                    @csrf
+                </form>
+                @endif
+                @if (auth()->user()->roles != 'siswa')    
                 <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                     @csrf
                 </form>
+                @endif
             </div>
         </li>
     </ul>
