@@ -60,7 +60,7 @@ Route::group(['middleware' => 'auth'], function () {
 });
 
 
-// add Siswa Authentication routes
+// add Siswa Authentication routes here
 Route::group(['prefix' => 'siswa'], function () {
     Route::get('/login', [AuthSiswaController::class, 'showLoginForm'])->name('siswa.login');
     Route::post('/login', [AuthSiswaController::class, 'login'])->name('siswa.login.submit');

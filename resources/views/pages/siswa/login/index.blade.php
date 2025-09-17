@@ -6,7 +6,6 @@
         <div class="col-md-12">
             <div class="card card-primary">
                 <div class="card-header"><h4>Login Siswa</h4></div>
-
                 <div class="card-body">
                     <form method="POST" action="{{ route('siswa.login.submit') }}">
                         @csrf
