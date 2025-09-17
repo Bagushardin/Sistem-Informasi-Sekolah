@@ -13,8 +13,8 @@
             <li class="menu-header">Master Data</li>
             
             <li class="{{ request()->routeIs('jurusan.*') ? 'active' : '' }}"><a class="nav-link" href="{{ route('jurusan.index') }}"><i class="fas fa-book"></i> <span>Jurusan</span></a></li>
-            
-            <li class="{{ request()->routeIs('absensi.*') ? 'active' : '' }}"><a class="nav-link" href="{{ route('absensi.index') }}"><i class="fas fa-book"></i> <span>Absensi</span></a></li>
+            {{-- absensi pada admin belum ada CRUD nya --}}
+            <li class="{{ request()->routeIs('admin.absensi.*') ? 'active' : '' }}"><a class="nav-link" href="{{ route('admin.absensi.index') }}"><i class="fas fa-book"></i> <span>Absensi</span></a></li>
 
             <li class="{{ request()->routeIs('mapel.*') ? 'active' : '' }}"><a class="nav-link" href="{{ route('mapel.index') }}"><i class="fas fa-book"></i> <span>Mata Pelajaran</span></a></li>
 
@@ -37,7 +37,8 @@
             <li class="menu-header">Master Data</li>
             <li class="{{ request()->routeIs('materi.*') ? 'active' : '' }}"><a class="nav-link" href="{{ route('materi.index') }}"><i class="fas fa-book"></i> <span>Materi</span></a></li>
             <li class="{{ request()->routeIs('tugas.*') ? 'active' : '' }}"><a class="nav-link" href="{{ route('tugas.index') }}"><i class="fas fa-list"></i> <span>Tugas</span></a></li>
-            <li class="{{ request()->routeIs('absensi.*') ? 'active' : '' }}"><a class="nav-link" href="{{ route('absensi.index') }}"><i class="fas fa-list"></i> <span>Absensi</span></a></li>   
+            {{-- penambahan menu absensi pada guru masih belum mengarah ke absensi blade guru --}}
+            <li class="{{ request()->routeIs('guru.absensi.*') ? 'active' : '' }}"><a class="nav-link" href="{{ route('guru.absensi.index') }}"><i class="fas fa-list"></i> <span>Absensi</span></a></li>   
 
             @elseif (Auth::check() && Auth::user()->roles == 'siswa')
             <li class="{{ request()->routeIs('siswa.dashboard.*') ? 'active' : '' }}"><a class="nav-link" href="{{ route('siswa.dashboard') }}"><i class="fas fa-columns"></i> <span>Dashboard</span></a></li>
