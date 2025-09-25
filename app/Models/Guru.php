@@ -10,7 +10,8 @@ class Guru extends Model
     use HasFactory;
 
     protected $fillable = [
-        // field yang bisa di-mass assignment
+        'user_id',
+        
     ];
 
     public function jadwalMengajar()

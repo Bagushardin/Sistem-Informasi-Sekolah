@@ -1,15 +1,17 @@
-<?php 
+<?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class SesiAbsensi extends Model
 {
     use HasFactory;
 
     protected $table = 'sesi_absensi';
-    
+
     protected $fillable = [
         'jadwal_mengajar_id',
         'tanggal',
@@ -20,11 +22,7 @@ class SesiAbsensi extends Model
         'catatan'
     ];
 
-    protected $casts = [
-        'tanggal' => 'date',
-        'jam_buka' => 'datetime:H:i',
-        'jam_tutup' => 'datetime:H:i'
-    ];
+    protected $dates = ['tanggal', 'jam_buka', 'jam_tutup'];
 
     public function jadwalMengajar()
     {
@@ -41,17 +39,14 @@ class SesiAbsensi extends Model
         return $this->hasMany(Absensi::class);
     }
 
-    // Check apakah sesi masih bisa diakses
     public function isBisaDiakses()
     {
-        if ($this->status !== 'buka') {
-            return false;
-        }
+        if ($this->status !== 'buka') return false;
 
         $sekarang = now();
-        $jamSekarang = $sekarang->format('H:i:s');
+        $jamBuka = $this->jam_buka instanceof Carbon ? $this->jam_buka : Carbon::parse($this->jam_buka);
+        $jamTutup = $this->jam_tutup instanceof Carbon ? $this->jam_tutup : Carbon::parse($this->jam_tutup);
 
-        return $jamSekarang >= $this->jam_buka->format('H:i:s') && 
-               $jamSekarang <= $this->jam_tutup->format('H:i:s');
+        return $sekarang->between($jamBuka, $jamTutup);
     }
 }

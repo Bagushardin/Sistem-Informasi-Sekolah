@@ -23,6 +23,7 @@ class MateriController extends Controller
     public function index()
     {
         $guru = Guru::where('user_id', Auth::user()->id)->first();
+        // $materi = Materi::where('guru_id', $guru->id)->get();
         $materi = Materi::where('guru_id', $guru->id)->get();
         $jadwal = Jadwal::where('mapel_id', $guru->mapel_id)->get();
         return view('pages.guru.materi.index', compact('materi', 'jadwal', 'guru'));

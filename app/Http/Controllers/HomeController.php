@@ -146,46 +146,103 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable|\Illuminate\Http\RedirectResponse
      */
-    public function guru()
-    {
-        $user = Auth::user();
+    // public function guru()
+    // {
+    //     $user = Auth::user();
         
-        // Debug logging
-        Log::info('Guru dashboard accessed', [
-            'user_id' => $user->id,
-            'role' => $user->roles,
-            'email' => $user->email
-        ]);
+    //     // Debug logging
+    //     Log::info('Guru dashboard accessed', [
+    //         'user_id' => $user->id,
+    //         'role' => $user->roles,
+    //         'email' => $user->email
+    //     ]);
         
-        // Verify user has guru role
-        if ($user->roles !== 'guru') {
-            Log::warning('Non-guru user trying to access guru dashboard', [
-                'user_id' => $user->id,
-                'role' => $user->roles
-            ]);
-            abort(403, 'Unauthorized access to guru dashboard');
-        }
+    //     // Verify user has guru role
+    //     if ($user->roles !== 'guru') {
+    //         Log::warning('Non-guru user trying to access guru dashboard', [
+    //             'user_id' => $user->id,
+    //             'role' => $user->roles
+    //         ]);
+    //         abort(403, 'Unauthorized access to guru dashboard');
+    //     }
         
-        $guru = Guru::where('user_id', $user->id)->first();
+    //     $guru = Guru::where('user_id', $user->id)->first();
         
-        // Check if guru data exists
-        if (!$guru) {
-            Log::warning('Guru data not found', ['user_id' => $user->id]);
-            return redirect()->route('home')->with('error', 'Data guru tidak ditemukan');
-        }
+    //     // Check if guru data exists
+    //     if (!$guru) {
+    //         Log::warning('Guru data not found', ['user_id' => $user->id]);
+    //         return redirect()->route('home')->with('error', 'Data guru tidak ditemukan');
+    //     }
         
-        try {
-            $materi = Materi::where('guru_id', $guru->id)->count();
-            $jadwal = Jadwal::where('mapel_id', $guru->mapel_id)->get();
-            $tugas = Tugas::where('guru_id', $guru->id)->count();
-            $hari = Carbon::now()->locale('id')->isoFormat('dddd');
+    //     try {
+    //         $materi = Materi::where('guru_id', $guru->id)->count();
+    //         $jadwal = Jadwal::where('mapel_id', $guru->mapel_id)->get();
+    //         $tugas = Tugas::where('guru_id', $guru->id)->count();
+    //         $hari = Carbon::now()->locale('id')->isoFormat('dddd');
 
-            return view('pages.guru.dashboard', compact('guru', 'materi', 'jadwal', 'hari', 'tugas'));
-        } catch (\Exception $e) {
-            Log::error('Error in guru dashboard', ['error' => $e->getMessage(), 'user_id' => $user->id]);
-            return redirect()->route('home')->with('error', 'Terjadi kesalahan saat memuat dashboard guru');
-        }
+    //         return view('pages.guru.dashboard', compact('guru', 'materi', 'jadwal', 'hari', 'tugas'));
+    //     } catch (\Exception $e) {
+    //         Log::error('Error in guru dashboard', ['error' => $e->getMessage(), 'user_id' => $user->id]);
+    //         return redirect()->route('home')->with('error', 'Terjadi kesalahan saat memuat dashboard guru');
+    //     }
+    // }
+
+
+    public function guru()
+{
+    $user = Auth::user();
+    
+    // Debug logging
+    Log::info('Guru dashboard accessed', [
+        'user_id' => $user->id,
+        'role' => $user->roles,
+        'email' => $user->email
+    ]);
+    
+    // Verify user has guru role
+    if ($user->roles !== 'guru') {
+        Log::warning('Non-guru user trying to access guru dashboard', [
+            'user_id' => $user->id,
+            'role' => $user->roles
+        ]);
+        abort(403, 'Unauthorized access to guru dashboard');
     }
+    
+    // Try to find guru by user_id first (recommended approach)
+    $guru = Guru::where('user_id', $user->id)->first();
+    
+    // If not found, try by NIP (fallback) - SAMA SEPERTI SISWA DENGAN NIS
+    if (!$guru && isset($user->nip)) {
+        $guru = Guru::where('nip', $user->nip)->first();
+    }
+    
+    // Check if guru exists
+    if (!$guru) {
+        Log::warning('Guru data not found', ['user_id' => $user->id]);
+        return redirect()->route('home')->with('error', 'Data guru tidak ditemukan');
+    }
+    
+    // Check if guru has mapel_id (SAMA SEPERTI SISWA DENGAN KELAS_ID)
+    if (!$guru->mapel_id) {
+        Log::warning('Guru has no subject assigned', ['guru_id' => $guru->id]);
+        // Tidak di-redirect, hanya warning karena guru masih bisa akses dashboard tanpa mapel
+    }
+    
+    try {
+        $materi = Materi::where('guru_id', $guru->id)->count();
+        
+        // Gunakan mapel_id jika ada, jika tidak gunakan empty collection
+        $jadwal = $guru->mapel_id ? Jadwal::where('mapel_id', $guru->mapel_id)->get() : collect();
+        
+        $tugas = Tugas::where('guru_id', $guru->id)->count();
+        $hari = Carbon::now()->locale('id')->isoFormat('dddd');
+
+        return view('pages.guru.dashboard', compact('guru', 'materi', 'jadwal', 'hari', 'tugas'));
+    } catch (\Exception $e) {
+        Log::error('Error in guru dashboard', ['error' => $e->getMessage(), 'user_id' => $user->id]);
+        return redirect()->route('home')->with('error', 'Terjadi kesalahan saat memuat dashboard guru');
+    }
+}
 
     /**
      * Siswa dashboard
