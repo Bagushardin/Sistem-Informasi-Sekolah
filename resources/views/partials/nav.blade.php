@@ -25,6 +25,16 @@
                     @csrf
                 </form>
                 @endif
+                @if (auth()->user()->roles == 'guru')    
+                <form id="logout-form" action="{{ route('guru.logout') }}" method="POST" style="display: none;">
+                    @csrf
+                </form>
+                @endif
+                @if (auth()->user()->roles != 'guru')    
+                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                    @csrf
+                </form>
+                @endif
             </div>
         </li>
     </ul>

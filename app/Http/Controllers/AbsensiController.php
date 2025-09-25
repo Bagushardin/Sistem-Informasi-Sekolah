@@ -273,7 +273,7 @@ class AbsensiController extends Controller
             return redirect()->back()->with('error', 'Data absensi tidak ditemukan');
         }
 
-        $mapel = $absensi->first()->sesiAbsensi->jadwalMengajar->mapel;
+        $mapel = $absensi->items()[0]->sesiAbsensi->jadwalMengajar->mapel;
 
         return view('pages.siswa.absensi.detail', compact('absensi', 'mapel'));
     }

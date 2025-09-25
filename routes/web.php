@@ -16,6 +16,7 @@ use App\Http\Controllers\AbsensiController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthSiswaController;
+use App\Http\Controllers\AuthGuruController;
 
 /*
 |--------------------------------------------------------------------------
@@ -67,6 +68,12 @@ Route::group(['prefix' => 'siswa'], function () {
     Route::post('/logout', [AuthSiswaController::class, 'logout'])->name('siswa.logout');
 });
 
+// add Guru Authentication routes here
+Route::group(['prefix' => 'guru'], function () {
+    Route::get('/login', [AuthGuruController::class, 'showLoginForm'])->name('guru.login');
+    Route::post('/login', [AuthGuruController::class, 'login'])->name('guru.login.submit');
+    Route::post('/logout', [AuthGuruController::class, 'logout'])->name('guru.logout');
+});
 
 // TEMPORARY: Dashboard routes tanpa middleware role untuk debugging
 Route::group(['middleware' => 'auth'], function () {
