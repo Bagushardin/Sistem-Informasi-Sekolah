@@ -19,6 +19,10 @@
                 <form id="logout-form" action="{{ route('siswa.logout') }}" method="POST" style="display: none;">
                     @csrf
                 </form>
+                @elseif (auth()->user()->roles == 'guru')
+                <form id="logout-form" action="{{ route('guru.logout') }}" method="POST" style="display: none;">
+                    @csrf
+                </form>
                 @endif
                 @if (auth()->user()->roles != 'siswa')    
                 <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">

@@ -121,104 +121,121 @@ class AbsensiController extends Controller
     /**
      * Dashboard absensi untuk guru
      */
-    public function guruIndex()
-    {
-        $guru = Auth::user()->guru;
+//    public function guruIndex()
+// {
+//     $user = Auth::user();
+    
+//     if ($user->roles !== 'guru') {
+//         return redirect()->back()->with('error', 'Hanya guru yang dapat mengakses halaman ini');
+//     }
+    
+//     // Cari guru by user_id
+//     $guru = Guru::where('user_id', $user->id)->first();
+    
+//     // Jika tidak ditemukan, cari by NIP
+//     if (!$guru && $user->nip) {
+//         $guru = Guru::where('nip', $user->nip)->first();
         
-        if (!$guru) {
-            return redirect()->back()->with('error', 'Akun Anda tidak terhubung dengan data guru');
-        }
+//         // Jika ditemukan by NIP, update user_id
+//         if ($guru) {
+//             $guru->update(['user_id' => $user->id]);
+//         }
+//     }
+    
+//     if (!$guru) {
+//         return redirect()->back()->with('error', 'Akun Anda tidak terhubung dengan data guru. Silakan hubungi administrator.');
+//     }
 
-        $sesiAktif = SesiAbsensi::with(['jadwalMengajar.kelas', 'jadwalMengajar.mapel'])
-            ->whereHas('jadwalMengajar', function($query) use ($guru) {
-                $query->where('guru_id', $guru->id);
-            })
-            ->where('tanggal', today())
-            ->where('status', 'buka')
-            ->get();
+//     $sesiAktif = SesiAbsensi::with(['jadwalMengajar.kelas', 'jadwalMengajar.mapel'])
+//         ->whereHas('jadwalMengajar', function($query) use ($guru) {
+//             $query->where('guru_id', $guru->id);
+//         })
+//         ->where('tanggal', today())
+//         ->where('status', 'buka')
+//         ->get();
 
-        return view('pages.guru.absensi.index', compact('sesiAktif'));
-    }
+//     return view('pages.guru.absensi.index', compact('sesiAktif'));
+// }
 
-    /**
-     * Halaman mengabsen siswa oleh guru
-     */
-    public function guruAbsen($sesiId)
-    {
-        $guru = Auth::user()->guru;
+//     /**
+//      * Halaman mengabsen siswa oleh guru
+//      */
+//     public function guruAbsen($sesiId)
+//     {
+//         $guru = Auth::user()->roles == 'guru' ? Auth::user()->guru : null;
         
-        $sesi = SesiAbsensi::with(['jadwalMengajar.kelas', 'jadwalMengajar.mapel', 'jadwalMengajar.guru'])
-            ->findOrFail($sesiId);
+//         $sesi = SesiAbsensi::with(['jadwalMengajar.kelas', 'jadwalMengajar.mapel', 'jadwalMengajar.guru'])
+//             ->findOrFail($sesiId);
 
-        // Cek apakah guru berhak mengakses sesi ini
-        if ($sesi->jadwalMengajar->guru_id !== $guru->id) {
-            return redirect()->back()->with('error', 'Anda tidak berhak mengakses sesi absensi ini');
-        }
+//         // Cek apakah guru berhak mengakses sesi ini
+//         if ($sesi->jadwalMengajar->guru_id !== $guru->id) {
+//             return redirect()->back()->with('error', 'Anda tidak berhak mengakses sesi absensi ini');
+//         }
 
-        // Cek apakah sesi masih bisa diakses
-        if (!$sesi->isBisaDiakses()) {
-            return redirect()->back()->with('error', 'Sesi absensi sudah ditutup atau belum dimulai');
-        }
+//         // Cek apakah sesi masih bisa diakses
+//         if (!$sesi->isBisaDiakses()) {
+//             return redirect()->back()->with('error', 'Sesi absensi sudah ditutup atau belum dimulai');
+//         }
 
-        $absensi = Absensi::with('siswa')
-            ->where('sesi_absensi_id', $sesiId)
-            ->orderBy('siswa_id')
-            ->get();
+//         $absensi = Absensi::with('siswa')
+//             ->where('sesi_absensi_id', $sesiId)
+//             ->orderBy('siswa_id')
+//             ->get();
 
-        return view('pages.guru.absensi.absen', compact('sesi', 'absensi'));
-    }
+//         return view('pages.guru.absensi.absen', compact('sesi', 'absensi'));
+//     }
 
-    /**
-     * Update absensi siswa oleh guru
-     */
-    public function updateAbsensi(Request $request, $sesiId)
-    {
-        $this->validate($request, [
-            'absensi' => 'required|array',
-            'absensi.*' => 'required|in:hadir,izin,sakit,alfa',
-            'keterangan' => 'array',
-            'keterangan.*' => 'nullable|string|max:255'
-        ]);
+//     /**
+//      * Update absensi siswa oleh guru
+//      */
+//     public function updateAbsensi(Request $request, $sesiId)
+//     {
+//         $this->validate($request, [
+//             'absensi' => 'required|array',
+//             'absensi.*' => 'required|in:hadir,izin,sakit,alfa',
+//             'keterangan' => 'array',
+//             'keterangan.*' => 'nullable|string|max:255'
+//         ]);
 
-        $guru = Auth::user()->guru;
-        $sesi = SesiAbsensi::with('jadwalMengajar')->findOrFail($sesiId);
+//         $guru = Auth::user()->guru;
+//         $sesi = SesiAbsensi::with('jadwalMengajar')->findOrFail($sesiId);
 
-        // Validasi akses guru
-        if ($sesi->jadwalMengajar->guru_id !== $guru->id) {
-            return redirect()->back()->with('error', 'Anda tidak berhak mengakses sesi ini');
-        }
+//         // Validasi akses guru
+//         if ($sesi->jadwalMengajar->guru_id !== $guru->id) {
+//             return redirect()->back()->with('error', 'Anda tidak berhak mengakses sesi ini');
+//         }
 
-        if (!$sesi->isBisaDiakses()) {
-            return redirect()->back()->with('error', 'Sesi absensi sudah ditutup');
-        }
+//         if (!$sesi->isBisaDiakses()) {
+//             return redirect()->back()->with('error', 'Sesi absensi sudah ditutup');
+//         }
 
-        try {
-            DB::beginTransaction();
+//         try {
+//             DB::beginTransaction();
 
-            foreach ($request->absensi as $absensiId => $status) {
-                $absensi = Absensi::where('id', $absensiId)
-                    ->where('sesi_absensi_id', $sesiId)
-                    ->firstOrFail();
+//             foreach ($request->absensi as $absensiId => $status) {
+//                 $absensi = Absensi::where('id', $absensiId)
+//                     ->where('sesi_absensi_id', $sesiId)
+//                     ->firstOrFail();
 
-                $absensi->update([
-                    'status' => $status,
-                    'keterangan' => $request->keterangan[$absensiId] ?? null,
-                    'waktu_absen' => now(),
-                    'diabsen_oleh' => Auth::id()
-                ]);
-            }
+//                 $absensi->update([
+//                     'status' => $status,
+//                     'keterangan' => $request->keterangan[$absensiId] ?? null,
+//                     'waktu_absen' => now(),
+//                     'diabsen_oleh' => Auth::id()
+//                 ]);
+//             }
 
-            DB::commit();
+//             DB::commit();
 
-            return redirect()->back()
-                ->with('success', 'Absensi berhasil disimpan');
+//             return redirect()->back()
+//                 ->with('success', 'Absensi berhasil disimpan');
 
-        } catch (\Exception $e) {
-            DB::rollback();
-            return redirect()->back()
-                ->with('error', 'Gagal menyimpan absensi: ' . $e->getMessage());
-        }
-    }
+//         } catch (\Exception $e) {
+//             DB::rollback();
+//             return redirect()->back()
+//                 ->with('error', 'Gagal menyimpan absensi: ' . $e->getMessage());
+//         }
+//     }
 
     // SISWA FUNCTIONS
 
