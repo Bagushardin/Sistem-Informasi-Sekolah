@@ -29,7 +29,7 @@
                             {{ session('success') }}
                         </div>
                     @endif
-
+                    {{-- Penambahan Keterangan Mapel Pada Guru --}}
                     <form action="{{ route('admin.jadwalMengajar.store') }}" method="POST">
                         @csrf
                         <div class="form-group">
@@ -38,7 +38,7 @@
                                 <option value="">Pilih Guru</option>
                                 @foreach($guru as $g)
                                     <option value="{{ $g->id }}" {{ old('guru_id') == $g->id ? 'selected' : '' }}>
-                                        {{ $g->user->name }}
+                                        {{ $g->nama }} ({{ $g->mapel->nama_mapel ?? 'Belum ada mapel' }})
                                     </option>
                                 @endforeach
                             </select>
@@ -127,4 +127,50 @@
         </div>
     </div>
 </div>
+
+@push('script')
+<script>
+$(document).ready(function() {
+    // Initialize Select2
+    $('.select2').select2({
+        width: '100%',
+        placeholder: "Pilih opsi...",
+        allowClear: true
+    });
+
+    // Validasi real-time antara guru dan mapel
+    $('#guru_id, #mapel_id').change(function() {
+        const guruId = $('#guru_id').val();
+        const mapelId = $('#mapel_id').val();
+        const selectedGuru = $('#guru_id option:selected');
+        const guruMapelId = selectedGuru.data('mapel');
+        
+        if (guruId && mapelId && guruMapelId && guruMapelId != mapelId) {
+            $('#mapel-warning').show();
+        } else {
+            $('#mapel-warning').hide();
+        }
+    });
+
+    // Validasi form sebelum submit
+    $('#jadwalForm').submit(function(e) {
+        const jamMulai = $('#jam_mulai').val();
+        const jamSelesai = $('#jam_selesai').val();
+        
+        if (jamMulai && jamSelesai && jamMulai >= jamSelesai) {
+            e.preventDefault();
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Jam selesai harus setelah jam mulai!'
+            });
+            return false;
+        }
+
+        // Tampilkan loading
+        $('button[type="submit"]').html('<i class="fas fa-spinner fa-spin"></i> Menyimpan...').prop('disabled', true);
+    });
+});
+</script>
+@endpush
 @endsection

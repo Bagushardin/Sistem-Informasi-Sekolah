@@ -14,6 +14,8 @@ class KelasController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
+    // Data Kelas yang sudah ditambah tidak masuk list hanya notif berhasil
     public function index()
     {
         $kelas = Kelas::orderBy('nama_kelas', 'asc')->get();
@@ -50,7 +52,7 @@ class KelasController extends Controller
 
         Kelas::create($request->all());
 
-        return redirect()->route('kelas.index')->with('success', 'Data berhasil disimpan');
+        return redirect()->route('admin.kelas.index')->with('success', 'Data berhasil disimpan');
     }
 
     /**

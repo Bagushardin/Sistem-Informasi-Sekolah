@@ -331,7 +331,80 @@
 
 @push('scripts')
 <script>
-// Script kamu tetap sama, sudah support Bootstrap 4 & 5
+// Fungsi untuk membuka modal tambah absensi
+function tambahAbsensi() {
+    $('#modalTambahAbsensi').modal('show');
+}
+
+// Fungsi untuk membuka modal absensi berdasarkan jadwal
+function bukaAbsensi(jadwalId) {
+    const jadwal = $('#jadwal_mengajar_id option[value="' + jadwalId + '"]');
+    const jadwalInfo = `${jadwal.data('kelas')} - ${jadwal.data('mapel')}<br>
+                       Guru: ${jadwal.data('guru')}<br>
+                       ${jadwal.data('hari')}, ${jadwal.data('jam-mulai')} - ${jadwal.data('jam-selesai')}`;
+    
+    $('#jadwal_id').val(jadwalId);
+    $('#jadwal_info').html(jadwalInfo);
+    $('#jam_buka_modal').val(jadwal.data('jam-mulai'));
+    $('#jam_tutup_modal').val(jadwal.data('jam-selesai'));
+    
+    $('#modalBukaAbsensi').modal('show');
+}
+
+// Fungsi untuk membuka modal tutup absensi
+function tutupAbsensi(sesiId) {
+    $('#formTutupAbsensi').attr('action', `/admin/absensi/${sesiId}/tutup`);
+    $('#modalTutupAbsensi').modal('show');
+}
+
+// Event listener saat memilih jadwal di modal tambah manual
+$('#jadwal_mengajar_id').change(function() {
+    const selected = $(this).find(':selected');
+    if (selected.val()) {
+        const preview = `
+            Kelas: ${selected.data('kelas')}<br>
+            Mata Pelajaran: ${selected.data('mapel')}<br>
+            Guru: ${selected.data('guru')}<br>
+            Jadwal: ${selected.data('hari')}, ${selected.data('jam-mulai')} - ${selected.data('jam-selesai')}
+        `;
+        $('#previewInfo').html(preview);
+        $('#jadwalPreview').removeClass('d-none');
+        
+        // Set default jam buka & tutup sesuai jadwal
+        $('#jam_buka').val(selected.data('jam-mulai'));
+        $('#jam_tutup').val(selected.data('jam-selesai'));
+    } else {
+        $('#jadwalPreview').addClass('d-none');
+    }
+});
+
+// Validasi form sebelum submit
+$('#formTambahAbsensi, #formBukaAbsensi').submit(function(e) {
+    e.preventDefault();
+    
+    const jamBuka = $(this).find('input[name="jam_buka"]').val();
+    const jamTutup = $(this).find('input[name="jam_tutup"]').val();
+    
+    if (jamBuka >= jamTutup) {
+        alert('Jam tutup harus lebih besar dari jam buka!');
+        return false;
+    }
+    
+    this.submit();
+});
+
+// Inisialisasi komponen form
+$(document).ready(function() {
+    // Set tanggal default ke hari ini
+    const today = new Date().toISOString().split('T')[0];
+    $('#tanggal').val(today);
+    
+    // Reset form saat modal ditutup
+    $('.modal').on('hidden.bs.modal', function() {
+        $(this).find('form').trigger('reset');
+        $('#jadwalPreview').addClass('d-none');
+    });
+});
 </script>
 @endpush
 @endsection

@@ -118,7 +118,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     // Jadwal Mengajar Routes
 Route::prefix('/jadwalMengajar')->group(function () {
     Route::get('/jadwal', [AdminJadwalMengajar::class, 'index'])->name('jadwalmengajar.index');
-    Route::post('/', [AdminJadwalMengajar::class, 'store'])->name('jadwalmengajar.store');
+    Route::post('/create', [AdminJadwalMengajar::class, 'store'])->name('jadwalmengajar.store');
     Route::get('/{id}/edit', [AdminJadwalMengajar::class, 'edit'])->name('jadwalmengajar.edit');
     Route::put('/{id}', [AdminJadwalMengajar::class, 'update'])->name('jadwalmengajar.update');
     Route::delete('/{id}', [AdminJadwalMengajar::class, 'destroy'])->name('jadwalmengajar.destroy');

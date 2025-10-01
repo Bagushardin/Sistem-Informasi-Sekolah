@@ -64,7 +64,7 @@ class JadwalMengajarController extends Controller
 
     public function create()
     {
-        $guru = Guru::all();
+        $guru = Guru::with('mapel')->get();
         $kelas = Kelas::all();
         $mapel = Mapel::all();
         $hari = ['senin', 'selasa', 'rabu', 'kamis', 'jumat', 'sabtu'];
@@ -72,7 +72,8 @@ class JadwalMengajarController extends Controller
         return view('pages.admin.jadwalMengajar.create', compact('guru', 'kelas', 'mapel', 'hari'));
     }
 
-    public function store(Request $request)
+    // Perbaikan Pada store method tapi masih invalid di field guru dan mapel
+     public function store(Request $request): mixed
 {
     Log::info('=== MEMULAI PROSES STORE JADWAL MENGAJAR ===');
     Log::info('Data request:', $request->all());
@@ -84,7 +85,22 @@ class JadwalMengajarController extends Controller
         'hari' => 'required|in:senin,selasa,rabu,kamis,jumat,sabtu',
         'jam_mulai' => 'required|date_format:H:i',
         'jam_selesai' => 'required|date_format:H:i|after:jam_mulai',
-    ]);
+    ],
+        [
+            'guru_id.required' => 'Pilih guru terlebih dahulu',
+            'guru_id.exists' => 'Guru yang dipilih tidak valid',
+            'kelas_id.required' => 'Pilih kelas terlebih dahulu',
+            'kelas_id.exists' => 'Kelas yang dipilih tidak valid',
+            'mapel_id.required' => 'Pilih mata pelajaran terlebih dahulu',
+            'mapel_id.exists' => 'Mata pelajaran yang dipilih tidak valid',
+            'hari.required' => 'Pilih hari terlebih dahulu',
+            'hari.in' => 'Hari yang dipilih tidak valid',
+            'jam_mulai.required' => 'Jam mulai harus diisi',
+            'jam_mulai.date_format' => 'Format jam mulai tidak valid',
+            'jam_selesai.required' => 'Jam selesai harus diisi',
+            'jam_selesai.date_format' => 'Format jam selesai tidak valid',
+            'jam_selesai.after' => 'Jam selesai harus setelah jam mulai',
+        ]);
 
     Log::info('Validasi berhasil');
 
@@ -163,6 +179,8 @@ class JadwalMengajarController extends Controller
     }
 }
 
+    
+
     public function edit($id)
     {
         $jadwal = JadwalMengajar::findOrFail($id);
@@ -174,7 +192,7 @@ class JadwalMengajarController extends Controller
         return view('pages.admin.jadwalMengajar.edit', compact('jadwal', 'guru', 'kelas', 'mapel', 'hari'));
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $id) :mixed
     {
         $jadwal = JadwalMengajar::findOrFail($id);
         
@@ -219,7 +237,7 @@ class JadwalMengajarController extends Controller
         }
     }
 
-    public function destroy($id)
+    public function destroy($id):mixed
     {
         try {
             $jadwal = JadwalMengajar::findOrFail($id);
@@ -231,7 +249,7 @@ class JadwalMengajarController extends Controller
     }
 
     // Method untuk API filter data
-    public function getFilterData()
+    public function getFilterData() :mixed 
     {
         $guru = Guru::with('user')->get();
         $kelas = Kelas::all();
@@ -241,4 +259,113 @@ class JadwalMengajarController extends Controller
             'kelas' => $kelas
         ]);
     }
+
+    /**
+ * Validasi konflik jadwal untuk guru dan kelas
+ * 
+ * @param array $data
+ * @return array|bool
+ */
+private function validasiKonflikJadwal(array $data): array|bool 
+{
+    // Cek konflik jadwal kelas
+    $konflikKelas = JadwalMengajar::where('hari', $data['hari'])
+        ->where('kelas_id', $data['kelas_id'])
+        ->where(function($query) use ($data) {
+            $query->where(function($q) use ($data) {
+                $q->where('jam_mulai', '<', $data['jam_selesai'])
+                  ->where('jam_selesai', '>', $data['jam_mulai']);
+            });
+        })
+        ->first();
+
+    if ($konflikKelas) {
+        return [
+            'status' => false,
+            'pesan' => 'Jadwal bertabrakan dengan kelas ' . $konflikKelas->kelas->nama_kelas . 
+                      ' pada jam ' . $konflikKelas->jam_mulai . ' - ' . $konflikKelas->jam_selesai
+        ];
+    }
+
+    // Cek konflik jadwal guru
+    $konflikGuru = JadwalMengajar::where('hari', $data['hari'])
+        ->where('guru_id', $data['guru_id'])
+        ->where(function($query) use ($data) {
+            $query->where(function($q) use ($data) {
+                $q->where('jam_mulai', '<', $data['jam_selesai'])
+                  ->where('jam_selesai', '>', $data['jam_mulai']);
+            });
+        })
+        ->first();
+
+    if ($konflikGuru) {
+        return [
+            'status' => false,
+            'pesan' => 'Guru sudah mengajar ' . $konflikGuru->mapel->nama_mapel . 
+                      ' di kelas ' . $konflikGuru->kelas->nama_kelas . 
+                      ' pada jam ' . $konflikGuru->jam_mulai . ' - ' . $konflikGuru->jam_selesai
+        ];
+    }
+
+    return true;
+}
+
+/**
+ * Validasi waktu jadwal
+ * 
+ * @param string $jamMulai
+ * @param string $jamSelesai
+ * @return array|bool
+ */
+private function validasiWaktuJadwal(string $jamMulai, string $jamSelesai): array|bool
+{
+    // Konversi ke menit untuk perbandingan
+    $mulai = (int) substr($jamMulai, 0, 2) * 60 + (int) substr($jamMulai, 3, 2);
+    $selesai = (int) substr($jamSelesai, 0, 2) * 60 + (int) substr($jamSelesai, 3, 2);
+    
+    // Durasi minimal 30 menit
+    if (($selesai - $mulai) < 30) {
+        return [
+            'status' => false,
+            'pesan' => 'Durasi minimal jadwal adalah 30 menit'
+        ];
+    }
+
+    // Durasi maksimal 4 jam
+    if (($selesai - $mulai) > 240) {
+        return [
+            'status' => false,
+            'pesan' => 'Durasi maksimal jadwal adalah 4 jam'
+        ];
+    }
+
+    return true;
+}
+
+/**
+ * Cek total jam mengajar guru
+ * 
+ * @param int $guruId
+ * @return array|bool
+ */
+private function validasiJamGuru(int $guruId): array|bool
+{
+    $totalMenit = JadwalMengajar::where('guru_id', $guruId)
+        ->get()
+        ->sum(function($jadwal) {
+            $mulai = (int) substr($jadwal->jam_mulai, 0, 2) * 60 + (int) substr($jadwal->jam_mulai, 3, 2);
+            $selesai = (int) substr($jadwal->jam_selesai, 0, 2) * 60 + (int) substr($jadwal->jam_selesai, 3, 2);
+            return $selesai - $mulai;
+        });
+
+    // Maksimal 24 jam per minggu
+    if ($totalMenit > (24 * 60)) {
+        return [
+            'status' => false,
+            'pesan' => 'Total jam mengajar guru sudah melebihi batas maksimal (24 jam/minggu)'
+        ];
+    }
+
+    return true;
+}
 }

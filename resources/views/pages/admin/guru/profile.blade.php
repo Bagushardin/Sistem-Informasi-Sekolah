@@ -154,8 +154,8 @@
                                     <div class="card-body">
                                         <h6>Aksi</h6>
                                         <div class="btn-group" role="group">
-                                            <a href="{{ route('guru.edit', Crypt::encrypt($guru->id)) }}" 
-                                               class="btn btn-warning">
+                                            <a href="{{--{{ route('guru.edit', Crypt::encrypt($guru->id)) }}  --}}" 
+                                            class="btn btn-warning">
                                                 <i class="fas fa-edit"></i> Edit Data
                                             </a>
                                             <button type="button" 
@@ -208,7 +208,7 @@
         document.getElementById('guruName').textContent = namaGuru;
         
         // Set action form
-        document.getElementById('deleteForm').action = '{{ route("guru.destroy", "") }}/' + encryptedId;
+        document.getElementById('deleteForm').action = '{{ route("admin.guru.destroy", "") }}/' + encryptedId;
         
         // Tampilkan modal
         $('#deleteModal').modal('show');
