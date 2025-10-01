@@ -1,5 +1,7 @@
 <?php
 
+// app/Models/Guru.php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -11,7 +13,6 @@ class Guru extends Model
 
     protected $fillable = [
         'user_id',
-        
     ];
 
     public function jadwalMengajar()
@@ -21,7 +22,9 @@ class Guru extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class)->withDefault([
+            'name' => 'User Tidak Ditemukan'
+        ]);
     }
 
     public function mapel()

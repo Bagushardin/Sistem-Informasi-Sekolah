@@ -37,7 +37,7 @@
                                                 <td>
                                                     <div class="d-flex">
                                                         <form method="POST"
-                                                            action="{{ route('user.destroy', $data->id) }}">
+                                                            action="{{ route('admin.user.destroy', $data->id) }}">
                                                             @csrf
                                                             @method('delete')
                                                             <button class="btn btn-danger btn-sm show_confirm"
@@ -66,7 +66,7 @@
                                 </button>
                             </div>
                             <div class="modal-body">
-                                <form action="{{ route('user.store') }}" method="POST">
+                                <form action="{{ route('admin.user.store') }}" method="POST">
                                     @csrf
                                     <div class="row">
                                         <div class="col-md-12">

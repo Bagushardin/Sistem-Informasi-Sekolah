@@ -41,8 +41,8 @@
                                         <td>{{ $data->sampai_jam }}</td>
                                         <td>
                                             <div class="d-flex">
-                                                <a href="{{ route('jadwal.edit', $data->id) }}" class="btn btn-success btn-sm"><i class="nav-icon fas fa-edit"></i> &nbsp; Edit</a>
-                                                <form method="POST" action="{{ route('jadwal.destroy', $data->id) }}">
+                                                <a href="{{ route('admin.jadwal.edit', $data->id) }}" class="btn btn-success btn-sm"><i class="nav-icon fas fa-edit"></i> &nbsp; Edit</a>
+                                                <form method="POST" action="{{ route('admin.jadwal.destroy', $data->id) }}">
                                                     @csrf
                                                     @method('delete')
                                                     <button class="btn btn-danger btn-sm show_confirm" data-toggle="tooltip" title='Delete' style="margin-left: 8px"><i class="nav-icon fas fa-trash-alt"></i> &nbsp; Hapus</button>
@@ -67,7 +67,7 @@
                             </button>
                         </div>
                         <div class="modal-body">
-                            <form action="{{ route('jadwal.store') }}" method="POST">
+                            <form action="{{ route('admin.jadwal.store') }}" method="POST">
                                 @csrf
                                 <div class="row">
                                     <div class="col-md-12">

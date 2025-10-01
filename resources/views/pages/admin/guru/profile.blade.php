@@ -12,10 +12,10 @@
                     <div class="card-header d-flex justify-content-between">
                         <h4>Profil Guru - {{ $guru->nama }}</h4>
                         <div>
-                            <!--<a href="{{ route('guru.edit', Crypt::encrypt($guru->id)) }}" class="btn btn-warning">
+                            <!--<a href="{{ route('admin.guru.edit', Crypt::encrypt($guru->id)) }}" class="btn btn-warning">
                                 <i class="fas fa-edit"></i> Edit
                             </a>-->
-                            <a href="{{ route('guru.index') }}" class="btn btn-primary ml-2">
+                            <a href="{{ route('admin.guru.index') }}" class="btn btn-primary ml-2">
                                 <i class="fas fa-arrow-left"></i> Kembali
                             </a>
                         </div>

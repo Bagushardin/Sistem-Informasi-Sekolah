@@ -9,11 +9,11 @@
                     <div class="card">
                         <div class="card-header d-flex justify-content-between">
                             <h4>Edit Mata Pelajaran</h4>
-                            <a href="{{ route('mapel.index') }}" class="btn btn-primary">Kembali</a>
+                            <a href="{{ route('admin.mapel.index') }}" class="btn btn-primary">Kembali</a>
                         </div>
                         <div class="card-body">
                             @include('partials.alert')
-                            <form method="POST" action="{{ route('mapel.update', $mapel->id) }}">
+                            <form method="POST" action="{{ route('admin.mapel.update', $mapel->id) }}">
                                 @csrf
                                 @method('PUT')
                                 <div class="form-group">

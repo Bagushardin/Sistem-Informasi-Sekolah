@@ -10,10 +10,10 @@
                 <div class="card">
                     <div class="card-header d-flex justify-content-between">
                         <h4>Edit Jurusan {{ $jurusan->nama_jurusan }}</h4>
-                        <a href="{{ route('jurusan.index') }}" class="btn btn-primary">Kembali</a>
+                        <a href="{{ route('admin.jurusan.index') }}" class="btn btn-primary">Kembali</a>
                     </div>
                     <div class="card-body">
-                        <form method="POST" action="{{ route('jurusan.update', $jurusan->id) }}">
+                        <form method="POST" action="{{ route('admin.jurusan.update', $jurusan->id) }}">
                             @csrf
                             @method('PUT')
                             <div class="form-group">

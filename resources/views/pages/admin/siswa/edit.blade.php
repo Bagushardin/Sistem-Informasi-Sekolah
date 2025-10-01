@@ -11,13 +11,13 @@
                 <div class="card">
                     <div class="card-header d-flex justify-content-between">
                         <h4>Edit Siswa {{ $siswa->nama }}</h4>
-                        <a href="{{ route('siswa.index') }}" class="btn btn-primary">
+                        <a href="{{ route('admin.siswa.index') }}" class="btn btn-primary">
                             <i class="fas fa-arrow-left"></i> Kembali
                         </a>
                     </div>
                     <div class="card-body">
                         <form method="POST" 
-                              action="{{ route('siswa.update', $siswa->id) }}" 
+                              action="{{ route('admin.siswa.update', $siswa->id) }}" 
                               enctype="multipart/form-data"
                               id="form-edit-siswa">
                             @csrf
@@ -152,7 +152,7 @@
                                 <button type="submit" class="btn btn-success" id="submit-btn">
                                     <i class="fas fa-save"></i> Simpan Perubahan
                                 </button>
-                                <a href="{{ route('siswa.index') }}" class="btn btn-secondary ml-2">
+                                <a href="{{ route('admin.siswa.index') }}" class="btn btn-secondary ml-2">
                                     <i class="fas fa-times"></i> Batal
                                 </a>
                             </div>

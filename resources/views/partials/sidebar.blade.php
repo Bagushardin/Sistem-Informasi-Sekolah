@@ -14,38 +14,40 @@
                 </li>
                 <li class="menu-header">Master Data</li>
 
-                <li class="{{ request()->routeIs('jurusan.*') ? 'active' : '' }}"><a class="nav-link"
-                        href="{{ route('jurusan.index') }}"><i class="fas fa-book"></i> <span>Jurusan</span></a></li>
+                <li class="{{ request()->routeIs('admin.jurusan.*') ? 'active' : '' }}"><a class="nav-link"
+                        href="{{ route('admin.jurusan.index') }}"><i class="fas fa-book"></i> <span>Jurusan</span></a></li>
                 {{-- absensi pada admin belum ada CRUD nya --}}
                 <li class="{{ request()->routeIs('admin.absensi.*') ? 'active' : '' }}"><a class="nav-link"
                         href="{{ route('admin.absensi.index') }}"><i class="fas fa-book"></i> <span>Absensi</span></a>
                 </li>
 
-                <li class="{{ request()->routeIs('mapel.*') ? 'active' : '' }}"><a class="nav-link"
-                        href="{{ route('mapel.index') }}"><i class="fas fa-book"></i> <span>Mata Pelajaran</span></a>
+                <li class="{{ request()->routeIs('admin.mapel.*') ? 'active' : '' }}"><a class="nav-link"
+                        href="{{ route('admin.mapel.index') }}"><i class="fas fa-book"></i> <span>Mata Pelajaran</span></a>
                 </li>
 
-                <li class="{{ request()->routeIs('guru.*') ? 'active' : '' }}"><a class="nav-link"
-                        href="{{ route('guru.index') }}"><i class="fas fa-user"></i> <span>Guru</span></a></li>
+                <li class="{{ request()->routeIs('admin.guru.*') ? 'active' : '' }}"><a class="nav-link"
+                        href="{{ route('admin.guru.index') }}"><i class="fas fa-user"></i> <span>Guru</span></a></li>
 
-                <li class="{{ request()->routeIs('kelas.*') ? 'active' : '' }}"><a class="nav-link"
-                        href="{{ route('kelas.index') }}"><i class="far fa-building"></i> <span>Kelas</span></a></li>
+                <li class="{{ request()->routeIs('admin.kelas.*') ? 'active' : '' }}"><a class="nav-link"
+                        href="{{ route('admin.kelas.index') }}"><i class="far fa-building"></i> <span>Kelas</span></a></li>
 
-                <li class="{{ request()->routeIs('siswa.*') ? 'active' : '' }}"><a class="nav-link"
-                        href="{{ route('siswa.index') }}"><i class="fas fa-users"></i> <span>Siswa</span></a></li>
+                <li class="{{ request()->routeIs('admin.siswa.*') ? 'active' : '' }}"><a class="nav-link"
+                        href="{{ route('admin.siswa.index') }}"><i class="fas fa-users"></i> <span>Siswa</span></a></li>
 
-                <li class="{{ request()->routeIs('jadwal.*') ? 'active' : '' }}"><a class="nav-link"
-                        href="{{ route('jadwal.index') }}"><i class="fas fa-calendar"></i> <span>Jadwal</span></a></li>
+                <li class="{{ request()->routeIs('admin.jadwal.*') ? 'active' : '' }}"><a class="nav-link"
+                        href="{{ route('admin.jadwal.index') }}"><i class="fas fa-calendar"></i> <span>Jadwal</span></a></li>
+                <li class="{{ request()->routeIs('admin.jadwalMengajar.*') ? 'active' : '' }}"><a class="nav-link"
+                        href="{{ route('admin.jadwalMengajar.index') }}"><i class="fas fa-calendar"></i> <span>Jadwal Mengajar</span></a></li>
 
-                <li class="{{ request()->routeIs('user.*') ? 'active' : '' }}"><a class="nav-link"
-                        href="{{ route('user.index') }}"><i class="fas fa-user"></i> <span>User</span></a></li>
+                <li class="{{ request()->routeIs('admin.user.*') ? 'active' : '' }}"><a class="nav-link"
+                        href="{{ route('admin.user.index') }}"><i class="fas fa-user"></i> <span>User</span></a></li>
 
-                <li class="{{ request()->routeIs('pengumuman-sekolah.*') ? 'active' : '' }}"><a class="nav-link"
-                        href="{{ route('pengumuman-sekolah.index') }}"><i class="fas fa-bullhorn"></i>
+                <li class="{{ request()->routeIs('admin.pengumuman-sekolah.*') ? 'active' : '' }}"><a class="nav-link"
+                        href="{{ route('admin.pengumuman-sekolah.index') }}"><i class="fas fa-bullhorn"></i>
                         <span>Pengumuman</span></a></li>
 
-                <li class="{{ request()->routeIs('pengaturan.*') ? 'active' : '' }}"><a class="nav-link"
-                        href="{{ route('pengaturan.index') }}"><i class="fas fa-cog"></i> <span>Pengaturan</span></a>
+                <li class="{{ request()->routeIs('admin.pengaturan.*') ? 'active' : '' }}"><a class="nav-link"
+                        href="{{ route('admin.pengaturan.index') }}"><i class="fas fa-cog"></i> <span>Pengaturan</span></a>
                 </li>
             @elseif (Auth::user()->roles == 'guru')
                 <li class="{{ request()->routeIs('guru.dashboard.*') ? 'active' : '' }}">
