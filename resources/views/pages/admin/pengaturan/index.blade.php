@@ -12,7 +12,7 @@
                         </div>
                         <div class="card-body">
                             @include('partials.alert')
-                            <form method="POST" action="{{ route('pengaturan.update', $pengaturan->id) }}"
+                            <form method="POST" action="{{ route('admin.pengaturan.update', $pengaturan->id) }}"
                                 enctype="multipart/form-data">
                                 @csrf
                                 @method('PUT')

@@ -37,7 +37,7 @@
                                                 <td>
                                                     <div class="d-flex">
                                                         <form method="POST"
-                                                            action="{{ route('user.destroy', $data->id) }}">
+                                                            action="{{ route('admin.user.destroy', $data->id) }}">
                                                             @csrf
                                                             @method('delete')
                                                             <button class="btn btn-danger btn-sm show_confirm"
@@ -66,7 +66,7 @@
                                 </button>
                             </div>
                             <div class="modal-body">
-                                <form action="{{ route('user.store') }}" method="POST">
+                                <form action="{{ route('admin.user.store') }}" method="POST">
                                     @csrf
                                     <div class="row">
                                         <div class="col-md-12">
@@ -161,18 +161,9 @@
                     );
                 } else if (kel == "orangtua") {
                     $("#noId").html(`
-                <label for="name">Nama</label>
-                <input id="name" type="text" placeholder="Nama" class="form-control" name="name" value="{{ old('name') }}" autocomplete="off">
-                <label for="no_telp">No Telepon</label>
-                <input id="no_telp" type="text" placeholder="No Telepon" class="form-control" name="no_telp" value="{{ old('no_telp') }}" autocomplete="off">
-                <label for="alamat">Alamat</label>
-                <input id="alamat" type="text" placeholder="Alamat" class="form-control" name="alamat" value="{{ old('alamat') }}" autocomplete="off">
-                <label for="siswa">Daftar Siswa</label>
-                <select id="siswa" name="siswa[]" class="select2 form-control" multiple="multiple">
-                    @foreach ($siswaList as $siswa)
-                        <option value="{{ $siswa->id }}" {{ in_array($siswa->id, old('siswa', [])) ? 'selected' : '' }}>{{ $siswa->user->name }}</option>
-                    @endforeach
-                </select>
+                    <div class="form-group">
+                        <label for="name">Nama Orang Tua</label>
+                        <input type="text" id="name" name="name" class="form-control @error('name') is-invalid @enderror" placeholder="{{ __('Nama Orang Tua') }}" value="{{ old('name', '') }}">
             `);
 
                     // Reinitialize select2 for the dynamically added select element

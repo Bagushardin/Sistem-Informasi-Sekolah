@@ -33,9 +33,9 @@
                                         <td>{{ $data->kelas->nama_kelas }}</td>
                                         <td>
                                             <div class="d-flex">
-                                                <a href="{{ route('siswa.show', Crypt::encrypt($data->id)) }}" class="btn btn-primary btn-sm" style="margin-right: 8px"><i class="nav-icon fas fa-user"></i> &nbsp; Profile</a>
-                                                <a href="{{ route('siswa.edit', Crypt::encrypt($data->id)) }}" class="btn btn-success btn-sm"><i class="nav-icon fas fa-edit"></i> &nbsp; Edit</a>
-                                                <form method="POST" action="{{ route('siswa.destroy', $data->id) }}">
+                                                <a href="{{ route('admin.siswa.show', Crypt::encrypt($data->id)) }}" class="btn btn-primary btn-sm" style="margin-right: 8px"><i class="nav-icon fas fa-user"></i> &nbsp; Profile</a>
+                                                <a href="{{ route('admin.siswa.edit', Crypt::encrypt($data->id)) }}" class="btn btn-success btn-sm"><i class="nav-icon fas fa-edit"></i> &nbsp; Edit</a>
+                                                <form method="POST" action="{{ route('admin.siswa.destroy', $data->id) }}">
                                                     @csrf
                                                     @method('delete')
                                                     <button class="btn btn-danger btn-sm show_confirm" data-toggle="tooltip" title='Delete' style="margin-left: 8px"><i class="nav-icon fas fa-trash-alt"></i> &nbsp; Hapus</button>
@@ -60,7 +60,7 @@
                             </button>
                         </div>
                         <div class="modal-body">
-                            <form action="{{ route('siswa.store') }}" method="POST" enctype="multipart/form-data">
+                            <form action="{{ route('admin.siswa.store') }}" method="POST" enctype="multipart/form-data">
                                 @csrf
                                 <div class="row">
                                     <div class="col-md-12">

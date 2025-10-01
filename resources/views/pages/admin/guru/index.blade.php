@@ -34,9 +34,9 @@
                                         <td>{{ $data->mapel->nama_mapel }} | {{ $data->mapel->jurusan->nama_jurusan }}</td>
                                         <td>
                                             <div class="d-flex">
-                                                <a href="{{ route('guru.show', Crypt::encrypt($data->id)) }}" class="btn btn-primary btn-sm" style="margin-right: 8px"><i class="nav-icon fas fa-user"></i> &nbsp; Profile</a>
-                                                <a href="{{ route('guru.edit', Crypt::encrypt($data->id)) }}" class="btn btn-success btn-sm" style="margin-right: 8px"><i class="nav-icon fas fa-edit"></i> &nbsp; Edit</a>
-                                                <form method="POST" action="{{ route('guru.destroy', Crypt::encrypt($data->id)) }}" class="d-inline">
+                                                <a href="{{ route('admin.guru.show', Crypt::encrypt($data->id)) }}" class="btn btn-primary btn-sm" style="margin-right: 8px"><i class="nav-icon fas fa-user"></i> &nbsp; Profile</a>
+                                                <a href="{{ route('admin.guru.edit', Crypt::encrypt($data->id)) }}" class="btn btn-success btn-sm" style="margin-right: 8px"><i class="nav-icon fas fa-edit"></i> &nbsp; Edit</a>
+                                                <form method="POST" action="{{ route('admin.guru.destroy', Crypt::encrypt($data->id)) }}" class="d-inline">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="btn btn-danger btn-sm show_confirm" data-toggle="tooltip" title='Delete' data-name="{{ $data->nama }}"><i class="nav-icon fas fa-trash-alt"></i> &nbsp; Hapus</button>
@@ -61,7 +61,7 @@
                             </button>
                         </div>
                         <div class="modal-body">
-                            <form action="{{ route('guru.store') }}" method="POST" enctype="multipart/form-data">
+                            <form action="{{ route('admin.guru.store') }}" method="POST" enctype="multipart/form-data">
                                 @csrf
                                 <div class="row">
                                     <div class="col-md-12">

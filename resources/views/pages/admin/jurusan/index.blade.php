@@ -29,8 +29,8 @@
                                         <td>{{ $data->nama_jurusan }}</td>
                                         <td>
                                             <div class="d-flex">
-                                                <a href="{{ route('jurusan.edit', $data->id) }}" class="btn btn-success btn-sm"><i class="nav-icon fas fa-edit"></i> &nbsp; Edit</a>
-                                                <form method="POST" action="{{ route('jurusan.destroy', $data->id) }}">
+                                                <a href="{{ route('admin.jurusan.edit', $data->id) }}" class="btn btn-success btn-sm"><i class="nav-icon fas fa-edit"></i> &nbsp; Edit</a>
+                                                <form method="POST" action="{{ route('admin.jurusan.destroy', $data->id) }}">
                                                     @csrf
                                                     @method('delete')
                                                     <button class="btn btn-danger btn-sm show_confirm" data-toggle="tooltip" title='Delete' style="margin-left: 8px"><i class="nav-icon fas fa-trash-alt"></i> &nbsp; Hapus</button>
@@ -55,7 +55,7 @@
                             </button>
                         </div>
                         <div class="modal-body">
-                            <form action="{{ route('jurusan.store') }}" method="POST">
+                            <form action="{{ route('admin.jurusan.store') }}" method="POST">
                                 @csrf
                                 <div class="row">
                                     <div class="col-md-12">

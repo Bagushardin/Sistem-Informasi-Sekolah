@@ -20,21 +20,180 @@ class AbsensiController extends Controller
     /**
      * Dashboard absensi untuk admin
      */
-    public function adminIndex()
+    // public function adminIndex()
+    // {
+    //     $jadwalHariIni = JadwalMengajar::with(['guru', 'kelas', 'mapel'])
+    //         ->whereRaw("LOWER(hari) = ?", [strtolower(now()->locale('id')->dayName)])
+    //         ->orderBy('jam_mulai')
+    //         ->get();
+
+    //     $sesiHariIni = SesiAbsensi::with(['jadwalMengajar.guru', 'jadwalMengajar.kelas', 'jadwalMengajar.mapel'])
+    //         ->where('tanggal', today())
+    //         ->orderBy('jam_buka')
+    //         ->get();
+
+    //     return view('pages.admin.absensi.index', compact('jadwalHariIni', 'sesiHariIni'));
+    // }
+public function adminIndex()
     {
+        $hariIni = now()->locale('id')->dayName;
+        
         $jadwalHariIni = JadwalMengajar::with(['guru', 'kelas', 'mapel'])
-            ->whereRaw("LOWER(hari) = ?", [strtolower(now()->locale('id')->dayName)])
+            ->whereRaw("LOWER(hari) = ?", [strtolower($hariIni)])
             ->orderBy('jam_mulai')
             ->get();
 
-        $sesiHariIni = SesiAbsensi::with(['jadwalMengajar.guru', 'jadwalMengajar.kelas', 'jadwalMengajar.mapel'])
+        $sesiHariIni = SesiAbsensi::with([
+                'jadwalMengajar.guru', 
+                'jadwalMengajar.kelas', 
+                'jadwalMengajar.mapel',
+                'absensi.siswa'
+            ])
             ->where('tanggal', today())
             ->orderBy('jam_buka')
             ->get();
 
-        return view('pages.admin.absensi.index', compact('jadwalHariIni', 'sesiHariIni'));
+        // Ambil jadwal untuk dropdown (7 hari ke depan)
+        $jadwalList = JadwalMengajar::with(['guru', 'kelas', 'mapel'])
+            ->orderBy('hari')
+            ->orderBy('jam_mulai')
+            ->get();
+
+        return view('pages.admin.absensi.index', compact(
+            'jadwalHariIni', 
+            'sesiHariIni', 
+            'hariIni',
+            'jadwalList'
+        ));
     }
 
+    public function buka(Request $request)
+    {
+        $request->validate([
+            'jadwal_mengajar_id' => 'required|exists:jadwal_mengajar,id',
+            'jam_buka' => 'required|date_format:H:i',
+            'jam_tutup' => 'required|date_format:H:i|after:jam_buka',
+            'catatan' => 'nullable|string|max:500'
+        ]);
+
+        // Cek apakah sudah ada sesi untuk jadwal hari ini
+        $sesiExist = SesiAbsensi::where('jadwal_mengajar_id', $request->jadwal_mengajar_id)
+            ->where('tanggal', today())
+            ->exists();
+
+        if ($sesiExist) {
+            return redirect()->back()->with('error', 'Sesi absensi untuk jadwal ini sudah ada hari ini.');
+        }
+
+        try {
+            SesiAbsensi::create([
+                'jadwal_mengajar_id' => $request->jadwal_mengajar_id,
+                'tanggal' => today(),
+                'jam_buka' => $request->jam_buka,
+                'jam_tutup' => $request->jam_tutup,
+                'status' => 'buka',
+                'dibuka_oleh' => Auth::id(),
+                'catatan' => $request->catatan
+            ]);
+
+            return redirect()->back()->with('success', 'Sesi absensi berhasil dibuka.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
+    }
+
+    public function tutup($id)
+    {
+        try {
+            $sesi = SesiAbsensi::findOrFail($id);
+            $sesi->update([
+                'status' => 'tutup',
+                'jam_tutup' => now()->format('H:i')
+            ]);
+
+            return redirect()->back()->with('success', 'Sesi absensi berhasil ditutup.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
+    }
+
+    public function tambahManual(Request $request)
+    {
+        $request->validate([
+            'jadwal_mengajar_id' => 'required|exists:jadwal_mengajar,id',
+            'tanggal' => 'required|date',
+            'jam_buka' => 'required|date_format:H:i',
+            'jam_tutup' => 'required|date_format:H:i|after:jam_buka',
+            'status' => 'required|in:buka,tutup',
+            'catatan' => 'nullable|string|max:500'
+        ]);
+
+        // Cek apakah sudah ada sesi untuk jadwal dan tanggal yang sama
+        $sesiExist = SesiAbsensi::where('jadwal_mengajar_id', $request->jadwal_mengajar_id)
+            ->where('tanggal', $request->tanggal)
+            ->exists();
+
+        if ($sesiExist) {
+            return redirect()->back()->with('error', 'Sudah ada sesi absensi untuk jadwal dan tanggal ini.');
+        }
+
+        try {
+            $sesi = SesiAbsensi::create([
+                'jadwal_mengajar_id' => $request->jadwal_mengajar_id,
+                'tanggal' => $request->tanggal,
+                'jam_buka' => $request->jam_buka,
+                'jam_tutup' => $request->jam_tutup,
+                'status' => $request->status,
+                'dibuka_oleh' => Auth::id(),
+                'catatan' => $request->catatan
+            ]);
+
+            return redirect()->route('admin.absensi.detail', $sesi->id)
+                ->with('success', 'Sesi absensi berhasil ditambahkan.');
+
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
+    }
+
+    public function show($id)
+    {
+        $sesi = SesiAbsensi::with([
+            'jadwalMengajar.guru',
+            'jadwalMengajar.kelas.siswa',
+            'absensi.siswa'
+        ])->findOrFail($id);
+
+        return view('pages.admin.absensi.detail', compact('sesi'));
+    }
+
+    public function updateAbsensi(Request $request, $id)
+    {
+        $request->validate([
+            'absensi' => 'required|array',
+            'absensi.*.siswa_id' => 'required|exists:siswa,id',
+            'absensi.*.status' => 'required|in:hadir,izin,sakit,alfa'
+        ]);
+
+        try {
+            foreach ($request->absensi as $dataAbsensi) {
+                Absensi::updateOrCreate(
+                    [
+                        'sesi_absensi_id' => $id,
+                        'siswa_id' => $dataAbsensi['siswa_id']
+                    ],
+                    [
+                        'status' => $dataAbsensi['status'],
+                        'waktu_absen' => $dataAbsensi['status'] === 'hadir' ? now() : null
+                    ]
+                );
+            }
+
+            return redirect()->back()->with('success', 'Absensi berhasil diperbarui.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
+    }
     /**
      * Buka sesi absensi oleh admin
      */
