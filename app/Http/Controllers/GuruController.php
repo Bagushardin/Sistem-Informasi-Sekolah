@@ -74,7 +74,7 @@ class GuruController extends Controller
         $guru->foto = $foto;
         $guru->save();
 
-        return redirect()->route('guru.index')->with('success', 'Data guru berhasil ditambahkan');
+        return redirect()->route('admin.guru.index')->with('success', 'Data guru berhasil ditambahkan');
     }
 
     /**

@@ -9,11 +9,11 @@
                     <div class="card">
                         <div class="card-header d-flex justify-content-between">
                             <h4>Edit Pengumuman</h4>
-                            <a href="{{ route('pengumuman-sekolah.index') }}" class="btn btn-primary">Kembali</a>
+                            <a href="{{ route('admin.pengumuman-sekolah.index') }}" class="btn btn-primary">Kembali</a>
                         </div>
                         <div class="card-body">
                             @include('partials.alert')
-                            <form method="POST" action="{{ route('pengumuman-sekolah.update', $pengumuman->id) }}">
+                            <form method="POST" action="{{ route('admin.pengumuman-sekolah.update', $pengumuman->id) }}">
                                 @csrf
                                 @method('PUT')
                                 <div class="form-group">

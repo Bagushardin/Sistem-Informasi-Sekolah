@@ -11,12 +11,12 @@
                 <div class="card">
                     <div class="card-header d-flex justify-content-between">
                         <h4>Edit Guru {{ $guru->nama }}</h4>
-                        <a href="{{ route('guru.index') }}" class="btn btn-primary">
+                        <a href="{{ route('admin.guru.index') }}" class="btn btn-primary">
                             <i class="fas fa-arrow-left"></i> Kembali
                         </a>
                     </div>
                     <div class="card-body">
-                        <form method="POST" action="{{ route('guru.update', Crypt::encrypt($guru->id)) }}" enctype="multipart/form-data">
+                        <form method="POST" action="{{ route('admin.guru.update', Crypt::encrypt($guru->id)) }}" enctype="multipart/form-data">
                             @csrf
                             @method('PUT')
                             

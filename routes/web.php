@@ -103,6 +103,10 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     ]);
     // routes/web.php
 
+    // Jadwal Mengajar
+    Route::resource('jadwalMengajar', \App\Http\Controllers\JadwalMengajarController::class);
+    Route::get('jadwal/filter', [\App\Http\Controllers\JadwalMengajarController::class, 'getByFilter'])->name('jadwal.filter');
+
     // Absensi admin
     Route::prefix('absensi')->name('absensi.')->group(function () {
         Route::get('/', [AbsensiController::class, 'adminIndex'])->name('index');

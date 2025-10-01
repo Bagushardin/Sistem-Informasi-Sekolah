@@ -15,10 +15,10 @@
                 <div class="card">
                     <div class="card-header d-flex justify-content-between">
                         <h4>Edit jadwal mapel {{ $jadwal->mapel->nama_mapel }} pada hari {{ $jadwal->hari }}</h4>
-                        <a href="{{ route('jadwal.index') }}" class="btn btn-primary">Kembali</a>
+                        <a href="{{ route('admin.jadwal.index') }}" class="btn btn-primary">Kembali</a>
                     </div>
                     <div class="card-body">
-                        <form method="POST" action="{{ route('jadwal.update', $jadwal->id) }}">
+                        <form method="POST" action="{{ route('admin.jadwal.update', $jadwal->id) }}">
                             @csrf
                             @method('PUT')
                             <div class="form-group">
