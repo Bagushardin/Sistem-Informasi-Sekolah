@@ -16,51 +16,57 @@ use Illuminate\Support\Facades\DB;
 class JadwalMengajarController extends Controller
 {
    public function index(Request $request)
-    {
-        // Ambil data untuk filter
-        $guru = Guru::with('user')->get();
-        $kelas = Kelas::all();
-        $mapel = Mapel::all();
-        $hari = ['senin', 'selasa', 'rabu', 'kamis', 'jumat', 'sabtu'];
+{
+    // Data untuk filter
+    $guru  = Guru::with('user')->get();
+    $kelas = Kelas::all();
+    $mapel = Mapel::all();
+    $hari  = ['senin', 'selasa', 'rabu', 'kamis', 'jumat', 'sabtu'];
 
-        // Query jadwal dengan filter dan handle null relations
-        $query = JadwalMengajar::with([
-            'guru.user' => function($query) {
-                $query->withTrashed(); // Jika menggunakan soft delete
-            },
-            'kelas', 
-            'mapel'
-        ]);
+    // Query jadwal dengan relasi
+    $query = JadwalMengajar::with([
+        'guru' => function ($q) {
+            $q->with(['user' => function ($u) {
+            
+            }]);
+        },
+        'kelas',
+        'mapel'
+    ]);
 
-        // Apply filters jika ada
-        if ($request->has('guru_id') && $request->guru_id) {
-            $query->where('guru_id', $request->guru_id);
-        }
-
-        if ($request->has('kelas_id') && $request->kelas_id) {
-            $query->where('kelas_id', $request->kelas_id);
-        }
-
-        if ($request->has('hari') && $request->hari) {
-            $query->where('hari', $request->hari);
-        }
-
-        $jadwal = $query->orderBy('hari')->orderBy('jam_mulai')->get();
-
-        // Group by hari untuk tampilan yang lebih rapi
-        $jadwalGrouped = [];
-        foreach ($hari as $h) {
-            $jadwalGrouped[$h] = $jadwal->where('hari', $h);
-        }
-
-        return view('pages.admin.jadwalMengajar.index', compact(
-            'jadwalGrouped', 
-            'hari', 
-            'guru', 
-            'kelas',
-            'mapel'
-        ));
+    // Filter Guru
+    if ($request->filled('guru_id')) {
+        $query->where('guru_id', $request->guru_id);
     }
+
+    // Filter Kelas
+    if ($request->filled('kelas_id')) {
+        $query->where('kelas_id', $request->kelas_id);
+    }
+
+    // Filter Hari
+    if ($request->filled('hari')) {
+        $query->where('hari', $request->hari);
+    }
+
+    // Ambil hasil jadwal
+    $jadwal = $query->orderBy('hari')->orderBy('jam_mulai')->get();
+
+    // Grouping by hari
+    $jadwalGrouped = [];
+    foreach ($hari as $h) {
+        $jadwalGrouped[$h] = $jadwal->where('hari', $h);
+    }
+
+    return view('pages.admin.jadwalMengajar.home', compact(
+        'jadwalGrouped',
+        'hari',
+        'guru',
+        'kelas',
+        'mapel'
+    ));
+}
+
 
     public function create()
     {
@@ -72,6 +78,104 @@ class JadwalMengajarController extends Controller
         return view('pages.admin.jadwalMengajar.create', compact('guru', 'kelas', 'mapel', 'hari'));
     }
 
+<<<<<<< HEAD
+//     public function store(Request $request)
+// {
+//     Log::info('=== MEMULAI PROSES STORE JADWAL MENGAJAR ===');
+//     Log::info('Data request:', $request->all());
+
+//     $request->validate([
+//         'guru_id' => 'required|exists:guru,id',
+//         'kelas_id' => 'required|exists:kelas,id',
+//         'mapel_id' => 'required|exists:mapel,id',
+//         'hari' => 'required|in:senin,selasa,rabu,kamis,jumat,sabtu',
+//         'jam_mulai' => 'required|date_format:H:i',
+//         'jam_selesai' => 'required|date_format:H:i|after:jam_mulai',
+//     ]);
+
+//     Log::info('Validasi berhasil');
+
+//     try {
+//         DB::beginTransaction();
+//         Log::info('Transaction dimulai');
+
+//         // Cek konflik jadwal di kelas yang sama
+//         Log::info('Mengecek konflik jadwal di kelas...');
+//         $konflikKelas = JadwalMengajar::where('hari', $request->hari)
+//             ->where('kelas_id', $request->kelas_id)
+//             ->where(function($query) use ($request) {
+//                 $query->where(function($q) use ($request) {
+//                     $q->where('jam_mulai', '<', $request->jam_selesai)
+//                       ->where('jam_selesai', '>', $request->jam_mulai);
+//                 });
+//             })
+//             ->exists();
+
+//         Log::info('Hasil cek konflik kelas: ' . ($konflikKelas ? 'ADA KONFLIK' : 'TIDAK ADA KONFLIK'));
+
+//         if ($konflikKelas) {
+//             Log::warning('Konflik jadwal ditemukan di kelas yang sama');
+//             DB::rollBack();
+//             return back()->withErrors(['error' => 'Jadwal bertabrakan dengan jadwal lain di kelas yang sama!'])->withInput();
+//         }
+
+//         // Cek apakah guru sudah mengajar di waktu yang sama
+//         Log::info('Mengecek konflik jadwal untuk guru...');
+//         $konflikGuru = JadwalMengajar::where('hari', $request->hari)
+//             ->where('guru_id', $request->guru_id)
+//             ->where(function($query) use ($request) {
+//                 $query->where(function($q) use ($request) {
+//                     $q->where('jam_mulai', '<', $request->jam_selesai)
+//                       ->where('jam_selesai', '>', $request->jam_mulai);
+//                 });
+//             })
+//             ->exists();
+
+//         Log::info('Hasil cek konflik guru: ' . ($konflikGuru ? 'ADA KONFLIK' : 'TIDAK ADA KONFLIK'));
+
+//         if ($konflikGuru) {
+//             Log::warning('Konflik jadwal ditemukan untuk guru');
+//             DB::rollBack();
+//             return back()->withErrors(['error' => 'Guru sudah mengajar di jam yang sama!'])->withInput();
+//         }
+
+//         // Buat jadwal mengajar
+//         Log::info('Membuat jadwal mengajar baru...');
+//         $jadwal = JadwalMengajar::create([
+//             'guru_id' => $request->guru_id,
+//             'kelas_id' => $request->kelas_id,
+//             'mapel_id' => $request->mapel_id,
+//             'hari' => $request->hari,
+//             'jam_mulai' => $request->jam_mulai,
+//             'jam_selesai' => $request->jam_selesai,
+//         ]);
+
+//         Log::info('Jadwal berhasil dibuat dengan ID: ' . $jadwal->id);
+
+//         DB::commit();
+//         Log::info('=== PROSES STORE BERHASIL ===');
+
+//         return redirect()->route('admin.jadwalMengajar.index')->with('success', 'Jadwal mengajar berhasil ditambahkan!');
+
+//     } catch (\Exception $e) {
+//         DB::rollBack();
+//         Log::error('Error saat menyimpan jadwal mengajar:', [
+//             'message' => $e->getMessage(),
+//             'file' => $e->getFile(),
+//             'line' => $e->getLine(),
+//             'trace' => $e->getTraceAsString()
+//         ]);
+        
+//         return back()->withErrors(['error' => 'Terjadi kesalahan sistem: ' . $e->getMessage()])->withInput();
+//     }
+// }
+
+
+public function store(Request $request)
+{
+    // Logging request awal
+    Log::info('Store JadwalMengajar - Incoming Request', $request->all());
+=======
     // Perbaikan Pada store method tapi masih invalid di field guru dan mapel
      public function store(Request $request): mixed
 {
@@ -103,88 +207,77 @@ class JadwalMengajarController extends Controller
         ]);
 
     Log::info('Validasi berhasil');
+>>>>>>> 8d79f7c2b52cde168429a11d7152bce65c27b830
 
     try {
-        DB::beginTransaction();
-        Log::info('Transaction dimulai');
-
-        // Cek konflik jadwal di kelas yang sama
-        Log::info('Mengecek konflik jadwal di kelas...');
-        $konflikKelas = JadwalMengajar::where('hari', $request->hari)
-            ->where('kelas_id', $request->kelas_id)
-            ->where(function($query) use ($request) {
-                $query->where(function($q) use ($request) {
-                    $q->where('jam_mulai', '<', $request->jam_selesai)
-                      ->where('jam_selesai', '>', $request->jam_mulai);
-                });
-            })
-            ->exists();
-
-        Log::info('Hasil cek konflik kelas: ' . ($konflikKelas ? 'ADA KONFLIK' : 'TIDAK ADA KONFLIK'));
-
-        if ($konflikKelas) {
-            Log::warning('Konflik jadwal ditemukan di kelas yang sama');
-            DB::rollBack();
-            return back()->withErrors(['error' => 'Jadwal bertabrakan dengan jadwal lain di kelas yang sama!'])->withInput();
-        }
-
-        // Cek apakah guru sudah mengajar di waktu yang sama
-        Log::info('Mengecek konflik jadwal untuk guru...');
-        $konflikGuru = JadwalMengajar::where('hari', $request->hari)
-            ->where('guru_id', $request->guru_id)
-            ->where(function($query) use ($request) {
-                $query->where(function($q) use ($request) {
-                    $q->where('jam_mulai', '<', $request->jam_selesai)
-                      ->where('jam_selesai', '>', $request->jam_mulai);
-                });
-            })
-            ->exists();
-
-        Log::info('Hasil cek konflik guru: ' . ($konflikGuru ? 'ADA KONFLIK' : 'TIDAK ADA KONFLIK'));
-
-        if ($konflikGuru) {
-            Log::warning('Konflik jadwal ditemukan untuk guru');
-            DB::rollBack();
-            return back()->withErrors(['error' => 'Guru sudah mengajar di jam yang sama!'])->withInput();
-        }
-
-        // Buat jadwal mengajar
-        Log::info('Membuat jadwal mengajar baru...');
-        $jadwal = JadwalMengajar::create([
-            'guru_id' => $request->guru_id,
-            'kelas_id' => $request->kelas_id,
-            'mapel_id' => $request->mapel_id,
-            'hari' => $request->hari,
-            'jam_mulai' => $request->jam_mulai,
-            'jam_selesai' => $request->jam_selesai,
+        $validated = $request->validate([
+            'guru_id'     => ['required', 'exists:gurus,id'],
+            'kelas_id'    => ['required', 'exists:kelas,id'],
+            'mapel_id'    => ['required', 'exists:mapels,id'],
+            'hari'        => ['required', 'in:senin,selasa,rabu,kamis,jumat,sabtu,minggu'],
+            'jam_mulai'   => ['required', 'date_format:H:i'],
+            'jam_selesai' => ['required', 'date_format:H:i', 'after:jam_mulai'],
         ]);
 
-        Log::info('Jadwal berhasil dibuat dengan ID: ' . $jadwal->id);
+        Log::info('Store JadwalMengajar - Validated Data', $validated);
 
-        DB::commit();
-        Log::info('=== PROSES STORE BERHASIL ===');
+        $start = new \DateTime($request->jam_mulai);
+        $end = new \DateTime($request->jam_selesai);
 
-        return redirect()->route('admin.jadwalMengajar.index')->with('success', 'Jadwal mengajar berhasil ditambahkan!');
+        // Tangani sesi yang melewati tengah malam
+        if ($end <= $start) {
+            $end->modify('+1 day');
+            Log::info('Sesi melewati tengah malam', [
+                'jam_mulai' => $request->jam_mulai,
+                'jam_selesai' => $request->jam_selesai,
+                'end_modified' => $end->format('H:i'),
+            ]);
+        }
 
-    } catch (\Exception $e) {
-        DB::rollBack();
-        Log::error('Error saat menyimpan jadwal mengajar:', [
+        $diff = $start->diff($end);
+        $totalMinutes = ($diff->h * 60) + $diff->i;
+
+        Log::info('Durasi sesi', [
+            'total_minutes' => $totalMinutes,
+            'hours' => $diff->h,
+            'minutes' => $diff->i,
+        ]);
+
+        if ($totalMinutes < 30) {
+            Log::warning('Durasi terlalu pendek', ['durasi' => $totalMinutes]);
+            return back()->withErrors(['jam_selesai' => 'Durasi minimal adalah 30 menit.'])->withInput();
+        }
+
+        if ($totalMinutes > 360) {
+            Log::warning('Durasi terlalu panjang', ['durasi' => $totalMinutes]);
+            return back()->withErrors(['jam_selesai' => 'Durasi maksimal adalah 6 jam.'])->withInput();
+        }
+
+        // Simpan data
+        $jadwal = JadwalMengajar::create($validated);
+        Log::info('Jadwal berhasil disimpan', ['id' => $jadwal->id]);
+
+        return redirect()->route('admin.jadwalMengajar.index')->with('success', 'Jadwal berhasil ditambahkan.');
+    } catch (\Throwable $e) {
+        // Tangkap dan log semua error
+        Log::error('Gagal menyimpan JadwalMengajar', [
             'message' => $e->getMessage(),
-            'file' => $e->getFile(),
-            'line' => $e->getLine(),
-            'trace' => $e->getTraceAsString()
+            'trace' => $e->getTraceAsString(),
         ]);
-        
-        return back()->withErrors(['error' => 'Terjadi kesalahan sistem: ' . $e->getMessage()])->withInput();
+
+        return back()->withErrors(['error' => 'Terjadi kesalahan saat menyimpan jadwal.'])->withInput();
     }
 }
 
+<<<<<<< HEAD
+=======
     
+>>>>>>> 8d79f7c2b52cde168429a11d7152bce65c27b830
 
     public function edit($id)
     {
         $jadwal = JadwalMengajar::findOrFail($id);
-        $guru = Guru::with('user')->get();
+        $guru = Guru::with('user_id')->get();
         $kelas = Kelas::all();
         $mapel = Mapel::all();
         $hari = ['senin', 'selasa', 'rabu', 'kamis', 'jumat', 'sabtu'];

@@ -9,6 +9,12 @@
             <div class="col-12">
                 @include('partials.alert')
                 
+<<<<<<< HEAD
+                <!-- Card Semua Jadwal -->
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Daftar Jadwal Mengajar</h4>
+=======
                 <!-- Header dengan Button Tambah -->
                 <div class="card">
                     <div class="card-header d-flex justify-content-between align-items-center">
@@ -16,6 +22,7 @@
                         <button type="button" class="btn btn-primary" onclick="tambahAbsensi()">
                             <i class="fas fa-plus"></i> Tambah Absensi Manual
                         </button>
+>>>>>>> 8d79f7c2b52cde168429a11d7152bce65c27b830
                     </div>
                     <div class="card-body">
                         @if($jadwalHariIni->count() > 0)
@@ -23,27 +30,30 @@
                                 <table class="table table-striped">
                                     <thead>
                                         <tr>
+                                            <th>Hari</th>
                                             <th>Waktu</th>
                                             <th>Guru</th>
                                             <th>Kelas</th>
                                             <th>Mata Pelajaran</th>
-                                            <th>Status</th>
-                                            <th>Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @foreach($jadwalHariIni as $jadwal)
+<<<<<<< HEAD
+=======
                                             @php
                                                 $sesiAktif = $jadwal->sesiAbsensi()->where('tanggal', today())->first();
                                                 $isAktif = $jadwal->isAktifSekarang();
                                             @endphp
+>>>>>>> 8d79f7c2b52cde168429a11d7152bce65c27b830
                                             <tr>
-                                                <td>
-                                                    <strong>{{ $jadwal->jam_mulai->format('H:i') }} - {{ $jadwal->jam_selesai->format('H:i') }}</strong>
-                                                </td>
+                                                <td>{{ ucfirst($jadwal->hari) }}</td>
+                                                <td><strong>{{ $jadwal->jam_mulai->format('H:i') }} - {{ $jadwal->jam_selesai->format('H:i') }}</strong></td>
                                                 <td>{{ $jadwal->guru->nama }}</td>
                                                 <td>{{ $jadwal->kelas->nama_kelas }}</td>
                                                 <td>{{ $jadwal->mapel->nama_mapel }}</td>
+<<<<<<< HEAD
+=======
                                                 <td>
                                                     @if($sesiAktif)
                                                         @if($sesiAktif->status === 'buka')
@@ -92,6 +102,7 @@
                                                         @endif
                                                     @endif
                                                 </td>
+>>>>>>> 8d79f7c2b52cde168429a11d7152bce65c27b830
                                             </tr>
                                         @endforeach
                                     </tbody>
@@ -102,25 +113,51 @@
                                 <div class="empty-state-icon">
                                     <i class="fas fa-calendar-times fa-3x text-muted"></i>
                                 </div>
+<<<<<<< HEAD
+                                <h2>Tidak ada jadwal mengajar</h2>
+                                <p class="lead">Belum ada jadwal yang terdaftar.</p>
+=======
                                 <h2 class="mt-3">Tidak ada jadwal mengajar hari ini</h2>
                                 <p class="lead">Belum ada jadwal mengajar yang terdaftar untuk hari {{ $hariIni }}.</p>
                                 <button type="button" class="btn btn-primary mt-3" onclick="tambahAbsensi()">
                                     <i class="fas fa-plus"></i> Tambah Absensi Manual
                                 </button>
+>>>>>>> 8d79f7c2b52cde168429a11d7152bce65c27b830
                             </div>
                         @endif
                     </div>
                 </div>
 
+<<<<<<< HEAD
+                <!-- Card Semua Sesi Absensi -->
+                <div class="card">
+=======
                 <!-- Card Sesi Absensi Hari Ini -->
                 <div class="card mt-4">
+>>>>>>> 8d79f7c2b52cde168429a11d7152bce65c27b830
                     <div class="card-header">
-                        <h4>Sesi Absensi Hari Ini</h4>
+                        <h4>Semua Sesi Absensi</h4>
                     </div>
                     <div class="card-body">
                         @if($sesiHariIni->count() > 0)
                             <div class="row">
                                 @foreach($sesiHariIni as $sesi)
+<<<<<<< HEAD
+                                    <div class="col-md-6 col-lg-4">
+                                        <div class="card card-primary">
+                                            <div class="card-header">
+                                                <h4>
+                                                    {{ $sesi->jadwalMengajar->kelas->nama_kelas }} - 
+                                                    {{ $sesi->jadwalMengajar->mapel->nama_mapel }}
+                                                </h4>
+                                                <div class="card-header-action">
+                                                    @if($sesi->status === 'buka')
+                                                        <span class="badge badge-success">Aktif</span>
+                                                    @else
+                                                        <span class="badge badge-secondary">Tutup</span>
+                                                    @endif
+                                                </div>
+=======
                                     <div class="col-md-6 col-lg-4 mb-4">
                                         <div class="card border-primary shadow-sm">
                                             <div class="card-header d-flex justify-content-between align-items-center">
@@ -130,9 +167,11 @@
                                                 @else
                                                     <span class="badge bg-secondary">Tutup</span>
                                                 @endif
+>>>>>>> 8d79f7c2b52cde168429a11d7152bce65c27b830
                                             </div>
                                             <div class="card-body">
                                                 <p><strong>Guru:</strong> {{ $sesi->jadwalMengajar->guru->nama }}</p>
+                                                <p><strong>Tanggal:</strong> {{ $sesi->tanggal->format('d-m-Y') }}</p>
                                                 <p><strong>Waktu:</strong> {{ $sesi->jam_buka->format('H:i') }} - {{ $sesi->jam_tutup->format('H:i') }}</p>
                                                 @if($sesi->catatan)
                                                     <p><strong>Catatan:</strong> {{ $sesi->catatan }}</p>
@@ -179,8 +218,13 @@
                                 <div class="empty-state-icon">
                                     <i class="fas fa-clipboard-list fa-3x text-muted"></i>
                                 </div>
+<<<<<<< HEAD
+                                <h2>Belum ada sesi absensi</h2>
+                                <p class="lead">Sesi absensi akan tampil di sini setelah dibuka.</p>
+=======
                                 <h2 class="mt-3">Belum ada sesi absensi hari ini</h2>
                                 <p class="lead">Buka sesi absensi untuk jadwal yang sedang berlangsung atau tambah absensi manual.</p>
+>>>>>>> 8d79f7c2b52cde168429a11d7152bce65c27b830
                             </div>
                         @endif
                     </div>
@@ -189,6 +233,8 @@
         </div>
     </div>
 </section>
+<<<<<<< HEAD
+=======
 
 <!-- Modal Tambah Absensi Manual -->
 <div class="modal fade" id="modalTambahAbsensi" tabindex="-1" aria-hidden="true">
@@ -407,4 +453,5 @@ $(document).ready(function() {
 });
 </script>
 @endpush
+>>>>>>> 8d79f7c2b52cde168429a11d7152bce65c27b830
 @endsection
