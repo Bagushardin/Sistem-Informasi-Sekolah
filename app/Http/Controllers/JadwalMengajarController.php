@@ -58,7 +58,7 @@ class JadwalMengajarController extends Controller
         $jadwalGrouped[$h] = $jadwal->where('hari', $h);
     }
 
-    return view('pages.admin.jadwalMengajar.index', compact(
+    return view('pages.admin.jadwalMengajar.home', compact(
         'jadwalGrouped',
         'hari',
         'guru',
