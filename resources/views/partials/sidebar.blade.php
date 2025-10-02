@@ -27,8 +27,11 @@
 
                 <li class="{{ request()->routeIs('admin.guru.*') ? 'active' : '' }}"><a class="nav-link"
                         href="{{ route('admin.guru.index') }}"><i class="fas fa-user"></i> <span>Guru</span></a></li>
+                {{-- Penambahan Menu Jadwal Mengajar --}}        
+                <li class="{{ request()->routeIs('admin.jadwalMengajar.*') ? 'active' : '' }}"><a class="nav-link"
+                        href="{{ route('admin.jadwalMengajar.index') }}"><i class="fas fa-user"></i> <span>Jadwal Mengajar</span></a></li>
 
-                <li class="{{ request()->routeIs('admin.kelas.*') ? 'active' : '' }}"><a class="nav-link"
+                <li class="{{ request()->routeIs('kelas.*') ? 'active' : '' }}"><a class="nav-link"
                         href="{{ route('admin.kelas.index') }}"><i class="far fa-building"></i> <span>Kelas</span></a></li>
 
                 <li class="{{ request()->routeIs('admin.siswa.*') ? 'active' : '' }}"><a class="nav-link"
@@ -36,13 +39,11 @@
 
                 <li class="{{ request()->routeIs('admin.jadwal.*') ? 'active' : '' }}"><a class="nav-link"
                         href="{{ route('admin.jadwal.index') }}"><i class="fas fa-calendar"></i> <span>Jadwal</span></a></li>
-                <li class="{{ request()->routeIs('admin.jadwalMengajar.*') ? 'active' : '' }}"><a class="nav-link"
-                        href="{{ route('admin.jadwalMengajar.index') }}"><i class="fas fa-calendar"></i> <span>Jadwal Mengajar</span></a></li>
 
                 <li class="{{ request()->routeIs('admin.user.*') ? 'active' : '' }}"><a class="nav-link"
                         href="{{ route('admin.user.index') }}"><i class="fas fa-user"></i> <span>User</span></a></li>
 
-                <li class="{{ request()->routeIs('admin.pengumuman-sekolah.*') ? 'active' : '' }}"><a class="nav-link"
+                <li class="{{ request()->routeIs('pengumuman-sekolah.*') ? 'active' : '' }}"><a class="nav-link"
                         href="{{ route('admin.pengumuman-sekolah.index') }}"><i class="fas fa-bullhorn"></i>
                         <span>Pengumuman</span></a></li>
 
@@ -68,7 +69,7 @@
                 </li>
                 <li class="{{ request()->routeIs('guru.absensi.*') ? 'active' : '' }}">
                     <a class="nav-link" href="{{ route('guru.absensi.index') }}">
-                        <i class="fas fa-list"></i> <span>Absensi guru</span>
+                        <i class="fas fa-list"></i> <span>Absensi Siswa</span>
                     </a>
                 </li>
             @elseif (Auth::check() && Auth::user()->roles == 'siswa')

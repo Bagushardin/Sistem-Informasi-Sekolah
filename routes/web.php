@@ -23,6 +23,7 @@ use App\Http\Controllers\AbsensiController;
 use App\Http\Controllers\AuthSiswaController;
 use App\Http\Controllers\GuruAbsensiController;
 use App\Http\Controllers\AuthGuruController;
+use App\Http\Controllers\AdminJadwalMengajar;
 
 /*
 |--------------------------------------------------------------------------
@@ -98,7 +99,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
         'jadwal' => JadwalController::class,
         'pengumuman-sekolah' => PengumumanSekolahController::class,
         'pengaturan' => PengaturanController::class,
+
     ]);
+    // routes/web.php
 
     // Jadwal Mengajar
     Route::resource('jadwalMengajar', \App\Http\Controllers\JadwalMengajarController::class);
@@ -109,7 +112,20 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
         Route::get('/', [AbsensiController::class, 'adminIndex'])->name('index');
         Route::post('/buka', [AbsensiController::class, 'bukaAbsensi'])->name('buka');
         Route::patch('/{id}/tutup', [AbsensiController::class, 'tutupAbsensi'])->name('tutup');
+        Route::post('/tambah-manual', [AbsensiController::class, 'tambahManual'])->name('tambah-manual');
+
     });
+    // Jadwal Mengajar Routes
+Route::prefix('/jadwalMengajar')->group(function () {
+    Route::get('/jadwal', [AdminJadwalMengajar::class, 'index'])->name('jadwalmengajar.index');
+    Route::post('/create', [AdminJadwalMengajar::class, 'store'])->name('jadwalmengajar.store');
+    Route::get('/{id}/edit', [AdminJadwalMengajar::class, 'edit'])->name('jadwalmengajar.edit');
+    Route::put('/{id}', [AdminJadwalMengajar::class, 'update'])->name('jadwalmengajar.update');
+    Route::delete('/{id}', [AdminJadwalMengajar::class, 'destroy'])->name('jadwalmengajar.destroy');
+    
+    // API Routes
+    Route::get('/hari/{hari}', [AdminJadwalMengajar::class, 'getJadwalByHari'])->name('jadwalmengajar.by-hari');
+});
 });
 
 // ==================== GURU ROUTES ====================

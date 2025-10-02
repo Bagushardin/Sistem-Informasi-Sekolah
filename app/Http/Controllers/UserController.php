@@ -102,6 +102,7 @@ class UserController extends Controller
     /**
      * Create user for guru role
      */
+    // perbaikan pada menu user
     private function createGuruUser(Request $request)
     {
         $guru = Guru::where('nip', $request->nip)->first();

@@ -61,7 +61,7 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form action="{{ route('kirim-jawaban') }}" method="POST" enctype="multipart/form-data">
+                        <form action="{{ route('siswa.kirim-jawaban') }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             @method('POST')
                             <div class="row">

@@ -220,12 +220,12 @@ class GuruController extends Controller
             
             $guru->delete();
 
-            return redirect()->route('guru.index')->with('success', 'Data guru berhasil dihapus');
+            return redirect()->route('admin.guru.index')->with('success', 'Data guru berhasil dihapus');
             
         } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
-            return redirect()->route('guru.index')->with('error', 'ID guru tidak valid');
+            return redirect()->route('admin.guru.index')->with('error', 'ID guru tidak valid');
         } catch (\Exception $e) {
-            return redirect()->route('guru.index')->with('error', 'Terjadi kesalahan saat menghapus data guru');
+            return redirect()->route('admin.guru.index')->with('error', 'Terjadi kesalahan saat menghapus data guru');
         }
     }
 }
