@@ -20,20 +20,82 @@ class AbsensiController extends Controller
     /**
      * Dashboard absensi untuk admin
      */
-    public function adminIndex()
-    {
-        $jadwalHariIni = JadwalMengajar::with(['guru', 'kelas', 'mapel'])
-            ->whereRaw("LOWER(hari) = ?", [strtolower(now()->locale('id')->dayName)])
-            ->orderBy('jam_mulai')
-            ->get();
+    // public function adminIndex()
+    // {
+    //     $jadwalHariIni = JadwalMengajar::with(['guru', 'kelas', 'mapel'])
+    //         ->whereRaw("LOWER(hari) = ?", [strtolower(now()->locale('id')->dayName)])
+    //         ->orderBy('jam_mulai')
+    //         ->get();
 
-        $sesiHariIni = SesiAbsensi::with(['jadwalMengajar.guru', 'jadwalMengajar.kelas', 'jadwalMengajar.mapel'])
-            ->where('tanggal', today())
-            ->orderBy('jam_buka')
-            ->get();
+    //     $sesiHariIni = SesiAbsensi::with(['jadwalMengajar.guru', 'jadwalMengajar.kelas', 'jadwalMengajar.mapel'])
+    //         ->where('tanggal', today())
+    //         ->orderBy('jam_buka')
+    //         ->get();
 
-        return view('pages.admin.absensi.index', compact('jadwalHariIni', 'sesiHariIni'));
-    }
+    //     return view('pages.admin.absensi.index', compact('jadwalHariIni', 'sesiHariIni'));
+    // }
+
+//     public function adminIndex()
+// {
+//     // Mapping hari Carbon ke nama hari di DB
+//     $mapHari = [
+//         'monday'    => 'senin',
+//         'tuesday'   => 'selasa',
+//         'wednesday' => 'rabu',
+//         'thursday'  => 'kamis',
+//         'friday'    => 'jumat',   // <- pastikan DB pakai 'jumat' bukan 'jum'at'
+//         'saturday'  => 'sabtu',
+//         'sunday'    => 'minggu',
+//     ];
+
+//     // Ambil hari ini dalam bahasa Inggris (lowercase)
+//     $today = strtolower(now()->englishDayOfWeek); // contoh: friday
+//     $hariDb = $mapHari[$today];                   // hasil: jumat
+
+//     // Ambil jadwal untuk hari ini
+//     $jadwalHariIni = JadwalMengajar::with(['guru', 'kelas', 'mapel'])
+//         ->where('hari', $hariDb)
+//         ->orderBy('jam_mulai')
+//         ->get();
+
+//     // Ambil sesi absensi untuk hari ini
+//     $sesiHariIni = SesiAbsensi::with([
+//         'jadwalMengajar.guru',
+//         'jadwalMengajar.kelas',
+//         'jadwalMengajar.mapel'
+//     ])
+//         ->where('tanggal', today())
+//         ->orderBy('jam_buka')
+//         ->get();
+
+//     return view('pages.admin.absensi.index', compact('jadwalHariIni', 'sesiHariIni'));
+// }
+
+public function adminIndex()
+{
+    // Ambil semua jadwal tanpa filter hari
+    $jadwalSemua = JadwalMengajar::with(['guru', 'kelas', 'mapel'])
+        ->orderBy('hari')
+        ->orderBy('jam_mulai')
+        ->get();
+
+    // Ambil semua sesi absensi tanpa filter tanggal
+    $sesiSemua = SesiAbsensi::with([
+        'jadwalMengajar.guru',
+        'jadwalMengajar.kelas',
+        'jadwalMengajar.mapel'
+    ])
+        ->orderBy('tanggal', 'desc')
+        ->orderBy('jam_buka')
+        ->get();
+
+    return view('pages.admin.absensi.index', [
+        'jadwalHariIni' => $jadwalSemua,  // biar view lama tetap jalan
+        'sesiHariIni'   => $sesiSemua
+    ]);
+}
+
+
 
     /**
      * Buka sesi absensi oleh admin

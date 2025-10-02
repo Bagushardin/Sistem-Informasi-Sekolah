@@ -1,7 +1,5 @@
 <?php
 
-// app/Models/Guru.php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -30,5 +28,10 @@ class Guru extends Model
     public function mapel()
     {
         return $this->belongsTo(Mapel::class);
+    }
+
+    public function kelas()
+    {
+        return $this->hasOne(Kelas::class, 'guru_id');
     }
 }
